@@ -1,0 +1,7 @@
+# Agent and IDE directories
+.agents/
+.rtk/
+
+# OS metadata
+.DS_Store
+Thumbs.db
