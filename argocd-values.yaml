@@ -17,21 +17,21 @@ configs:
   cm:
     admin.enabled: "true"
 
-# Resource requests/limits can be added here as needed for local Kind testing
+# Resource requests/limits configured for a lightweight local Kind testing environment
 controller:
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 2048Mi
-    requests:
-      cpu: 250m
-      memory: 512Mi
-
-repoServer:
   resources:
     limits:
       cpu: 1000m
       memory: 1024Mi
     requests:
       cpu: 100m
-      memory: 256Mi
+      memory: 128Mi
+
+repoServer:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
