@@ -1,0 +1,37 @@
+# Helm values for ArgoCD installation
+# Chart: argo/argo-cd (https://argoproj.github.io/argo-helm)
+
+global:
+  # Enable the default admin user
+  admin.enabled: true
+
+server:
+  # Disable SSL on the server container itself, making local port-forwarding and Ingress setup simpler
+  extraArgs:
+    - --insecure
+  service:
+    type: ClusterIP
+
+configs:
+  # Configure general ArgoCD settings if needed
+  cm:
+    admin.enabled: "true"
+
+# Resource requests/limits can be added here as needed for local Kind testing
+controller:
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+repoServer:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
