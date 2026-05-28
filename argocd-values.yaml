@@ -16,7 +16,7 @@ configs:
   # Configure general ArgoCD settings if needed
   cm:
     admin.enabled: "true"
-    kustomize.buildOptions: "--enable-helm"
+    kustomize.buildOptions: "--enable-helm --load-restrictor=LoadRestrictionsNone"
 
 # Resource requests/limits configured for a lightweight local Kind testing environment
 controller:
