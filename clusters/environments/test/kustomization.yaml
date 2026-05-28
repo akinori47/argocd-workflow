@@ -1,10 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# В тесте разворачиваем только Ingress и Prometheus
+# В тесте разворачиваем Ingress, Prometheus и Node Exporter
 resources:
   - ../../base/argocd-apps/ingress-nginx-app.yaml
   - ../../base/argocd-apps/prometheus-app.yaml
+  - ../../base/argocd-apps/node-exporter-app.yaml
 
 patches:
   - target:
@@ -14,3 +15,10 @@ patches:
       - op: replace
         path: /spec/source/path
         value: clusters/environments/test/ingress-nginx
+  - target:
+      kind: Application
+      name: system-node-exporter
+    patch: |-
+      - op: replace
+        path: /spec/source/path
+        value: clusters/environments/test/node-exporter
