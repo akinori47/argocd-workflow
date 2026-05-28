@@ -22,3 +22,10 @@ patches:
       - op: replace
         path: /spec/source/path
         value: clusters/environments/test/node-exporter
+  - target:
+      kind: Application
+      name: system-prometheus
+    patch: |-
+      - op: replace
+        path: /spec/source/path
+        value: clusters/environments/test/prometheus
