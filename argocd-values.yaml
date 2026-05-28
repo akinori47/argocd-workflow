@@ -17,6 +17,8 @@ configs:
   cm:
     admin.enabled: "true"
     kustomize.buildOptions: "--enable-helm --load-restrictor=LoadRestrictionsNone"
+  secret:
+    argocdServerAdminPassword: "$2a$10$r00nWI22wqfHPoYXG2oa9ezv8fY41KwVOYeV9ewXNYKDvQxi9hcFm"
 
 # Resource requests/limits configured for a lightweight local Kind testing environment
 controller:
