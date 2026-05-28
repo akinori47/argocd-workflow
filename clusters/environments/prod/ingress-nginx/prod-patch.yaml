@@ -4,19 +4,8 @@ metadata:
   name: ingress-nginx-controller
   namespace: ingress-nginx
 spec:
-  replicas: 3
   template:
     metadata:
       labels:
         corporate.internal/security-zone: "prod-dmz"
         monitored-by: "infra-agent"
-    spec:
-      containers:
-        - name: controller
-          resources:
-            limits:
-              cpu: "2"
-              memory: 2Gi
-            requests:
-              cpu: "1"
-              memory: 1Gi
