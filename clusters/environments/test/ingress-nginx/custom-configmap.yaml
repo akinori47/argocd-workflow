@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-custom-config
+  namespace: ingress-nginx
+data:
+  ingress-parameter: "test-ingress-value"
+  description: "This is a custom parameter added in the test ingress-nginx overlay"

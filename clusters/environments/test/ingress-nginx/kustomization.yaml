@@ -10,3 +10,6 @@ helmCharts:
     additionalValuesFiles:
       - ../../../base/ingress-nginx/common-values.yaml
       - values.yaml
+
+resources:
+  - custom-configmap.yaml
