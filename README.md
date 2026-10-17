@@ -102,8 +102,22 @@ chart:
 После успешной проверки удалите блок `chart:` из `preprod` и обновите базовую версию в `clusters/base/addons/ingress-nginx/addon.yaml`.
 
 ### В. Добавление дополнительных Raw-манифестов (`ConfigMap`, `StorageClass`, `Gateway` и др.)
-1. **Внутри существующего аддона:** используйте штатные списки `extraDeploy` / `extraManifests` / `extraObjects` в локальном `values.yaml` окружения (см. пример в `clusters/environments/test/addons/ingress-nginx/values.yaml`).
-2. **Для отдельных голых манифестов без внешнего чарта (`StorageClass`, `ClusterIssuer`, глобальные `NetworkPolicy`):** в `addons-appset.yaml` при необходимости добавляется 3-й источник (`path: clusters/environments/<env>/addons/{{.addon}}/manifests`) либо выделяется отдельный Kustomize-каталог `clusters/environments/<env>/raw`.
+Дополнительные «голые» Kubernetes-манифесты кладутся прямо рядом с `values.yaml` и `addon.yaml` внутри папки аддона в нужном окружении (`clusters/environments/<env>/addons/<addon>/`) и подключаются через условный **Source 3 (Kustomize)** без создания пустых файлов-заглушек в остальных аддонах:
+1. В `clusters/environments/<env>/addons/<addon>/addon.yaml` включите флаг `kustomize: "true"`:
+   ```yaml
+   addon: ingress-nginx
+   enabled: "true"
+   kustomize: "true"
+   ```
+2. Положите нужные манифесты (например, `custom-configmap.yaml`, `gateway.yaml`) в ту же папку и перечислите их в `kustomization.yaml`:
+   ```yaml
+   apiVersion: kustomize.config.k8s.io/v1beta1
+   kind: Kustomization
+
+   resources:
+     - custom-configmap.yaml
+   ```
+   > Kustomize читает строго белый список из `resources:` и автоматически игнорирует лежащие рядом `addon.yaml` и `values.yaml`. Чтобы временно отключить отдельный манифест — закомментируйте его в `kustomization.yaml`; чтобы отключить все raw-манифесты аддона — поставьте `kustomize: "false"` (или уберите строку из оверлея).
 
 ---
 
@@ -114,6 +128,9 @@ chart:
 kubectl kustomize bootstrap/environments/test
 kubectl kustomize bootstrap/environments/preprod
 kubectl kustomize bootstrap/environments/prod
+
+# Проверка рендера raw-манифестов (Source 3 Kustomize) в папке аддона
+kubectl kustomize clusters/environments/test/addons/ingress-nginx
 
 # Проверка шаблонов приложений
 helm template demo-backend clusters/base/templates/backend -f clusters/base/templates/backend/common-values.yaml

@@ -17,6 +17,11 @@
       "enum": ["true", "false"],
       "description": "String boolean ('true' or 'false') used by ApplicationSet selector to enable/disable the addon per environment."
     },
+    "kustomize": {
+      "type": "string",
+      "enum": ["true", "false"],
+      "description": "When 'true', attaches Source 3 (Kustomize) pointing to clusters/environments/<env>/addons/<addon> to render raw Kubernetes manifests listed in kustomization.yaml."
+    },
     "namespace": {
       "type": "string",
       "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",

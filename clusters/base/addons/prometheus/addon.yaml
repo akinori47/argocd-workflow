@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../schemas/addon.schema.json
 addon: prometheus
 enabled: "false"
+kustomize: "false"
 namespace: monitoring
 syncWave: "0"
 chart:

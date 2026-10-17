@@ -66,3 +66,24 @@ spec:
           - CreateNamespace=true
           - ServerSideApply=true
           - RespectIgnoreDifferences=true
+          - SkipDryRunOnMissingResource=true
+  templatePatch: |
+    {{- if eq .kustomize "true" }}
+    spec:
+      sources:
+        - repoURL: https://github.com/akinori47/argocd-workflow.git
+          targetRevision: HEAD
+          ref: values
+        - repoURL: '{{.chart.repoURL}}'
+          chart: '{{.chart.name}}'
+          targetRevision: '{{.chart.version}}'
+          helm:
+            releaseName: '{{.addon}}'
+            ignoreMissingValueFiles: true
+            valueFiles:
+              - '$values/clusters/base/addons/{{.addon}}/common-values.yaml'
+              - '$values/clusters/environments/ENV_PLACEHOLDER/addons/{{.addon}}/values.yaml'
+        - repoURL: https://github.com/akinori47/argocd-workflow.git
+          targetRevision: HEAD
+          path: 'clusters/environments/ENV_PLACEHOLDER/addons/{{.addon}}'
+    {{- end }}
