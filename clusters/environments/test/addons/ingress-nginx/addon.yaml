@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../../../../schemas/addon.schema.json
+addon: ingress-nginx
+enabled: "true"

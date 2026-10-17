@@ -1,0 +1,17 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/myorg/frontend-app
+  tag: "v1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

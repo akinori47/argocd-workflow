@@ -1,0 +1,11 @@
+# Global DRY defaults for prometheus-node-exporter
+prometheus:
+  monitor:
+    enabled: false
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi

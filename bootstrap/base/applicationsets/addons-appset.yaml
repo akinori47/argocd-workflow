@@ -1,0 +1,68 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-addons
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - merge:
+        mergeKeys:
+          - addon
+        generators:
+          # Layer 1: Canonical addon catalog (chart, repoURL, default version, namespace, syncWave)
+          - git:
+              repoURL: https://github.com/akinori47/argocd-workflow.git
+              revision: HEAD
+              files:
+                - path: "clusters/base/addons/*/addon.yaml"
+          # Layer 2: Environment-specific overrides (enable/disable toggle, optional chart version override)
+          - git:
+              repoURL: https://github.com/akinori47/argocd-workflow.git
+              revision: HEAD
+              files:
+                - path: "clusters/environments/ENV_PLACEHOLDER/addons/*/addon.yaml"
+        selector:
+          matchLabels:
+            enabled: "true"
+  template:
+    metadata:
+      name: 'ENV_PLACEHOLDER-addon-{{.addon}}'
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: '/clusters/base/addons/{{.addon}};/clusters/environments/ENV_PLACEHOLDER/addons/{{.addon}}'
+        argocd.argoproj.io/sync-wave: '{{.syncWave}}'
+      labels:
+        app.kubernetes.io/part-of: cluster-addons
+        environment: ENV_PLACEHOLDER
+    spec:
+      project: tier0-addons
+      sources:
+        # Source 1: Git monorepo reference for DRY Helm value files
+        - repoURL: https://github.com/akinori47/argocd-workflow.git
+          targetRevision: HEAD
+          ref: values
+        # Source 2: Native Helm chart (cached by Argo CD repo-server, no kustomize --enable-helm needed)
+        - repoURL: '{{.chart.repoURL}}'
+          chart: '{{.chart.name}}'
+          targetRevision: '{{.chart.version}}'
+          helm:
+            releaseName: '{{.addon}}'
+            # Allows environments to omit values.yaml when common-values.yaml is sufficient
+            ignoreMissingValueFiles: true
+            valueFiles:
+              - '$values/clusters/base/addons/{{.addon}}/common-values.yaml'
+              - '$values/clusters/environments/ENV_PLACEHOLDER/addons/{{.addon}}/values.yaml'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true

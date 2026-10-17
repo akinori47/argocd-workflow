@@ -1,0 +1,19 @@
+# Global DRY defaults for Envoy Gateway (Kubernetes Gateway API)
+deployment:
+  envoyGateway:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+config:
+  envoyGateway:
+    logging:
+      level:
+        default: info
+    telemetry:
+      metrics:
+        prometheus:
+          disable: false

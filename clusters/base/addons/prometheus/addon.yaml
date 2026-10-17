@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schemas/addon.schema.json
+addon: prometheus
+enabled: "false"
+namespace: monitoring
+syncWave: "0"
+chart:
+  repoURL: https://prometheus-community.github.io/helm-charts
+  name: prometheus
+  version: "27.5.0"
