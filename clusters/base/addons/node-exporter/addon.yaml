@@ -2,6 +2,7 @@
 addon: node-exporter
 # Enabled by default across all clusters (Opt-out pattern: no folder needed in environments/* unless overriding)
 enabled: "true"
+kustomize: "false"
 namespace: monitoring
 syncWave: "-1"
 chart:

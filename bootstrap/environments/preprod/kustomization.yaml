@@ -27,3 +27,25 @@ patches:
       - op: replace
         path: /spec/template/spec/sources/1/helm/valueFiles/1
         value: $values/clusters/environments/preprod/addons/{{.addon}}/values.yaml
+      - op: replace
+        path: /spec/templatePatch
+        value: |
+          {{- if eq .kustomize "true" }}
+          spec:
+            sources:
+              - repoURL: https://github.com/akinori47/argocd-workflow.git
+                targetRevision: HEAD
+                ref: values
+              - repoURL: '{{.chart.repoURL}}'
+                chart: '{{.chart.name}}'
+                targetRevision: '{{.chart.version}}'
+                helm:
+                  releaseName: '{{.addon}}'
+                  ignoreMissingValueFiles: true
+                  valueFiles:
+                    - '$values/clusters/base/addons/{{.addon}}/common-values.yaml'
+                    - '$values/clusters/environments/preprod/addons/{{.addon}}/values.yaml'
+              - repoURL: https://github.com/akinori47/argocd-workflow.git
+                targetRevision: HEAD
+                path: 'clusters/environments/preprod/addons/{{.addon}}'
+          {{- end }}
