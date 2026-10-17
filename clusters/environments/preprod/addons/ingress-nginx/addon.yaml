@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../../../schemas/addon.schema.json
+addon: ingress-nginx
+enabled: "true"
+# Example of staging a newer chart version in preprod before promoting to base/prod
+chart:
+  version: "4.12.1"

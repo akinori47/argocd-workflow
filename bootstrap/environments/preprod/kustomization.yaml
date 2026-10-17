@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: ApplicationSet
+      name: cluster-addons
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: preprod-cluster-addons
+      - op: replace
+        path: /spec/generators/0/merge/generators/1/git/files/0/path
+        value: clusters/environments/preprod/addons/*/addon.yaml
+      - op: replace
+        path: /spec/template/metadata/name
+        value: preprod-addon-{{.addon}}
+      - op: replace
+        path: /spec/template/metadata/annotations/argocd.argoproj.io~1manifest-generate-paths
+        value: /clusters/base/addons/{{.addon}};/clusters/environments/preprod/addons/{{.addon}}
+      - op: replace
+        path: /spec/template/metadata/labels/environment
+        value: preprod
+      - op: replace
+        path: /spec/template/spec/sources/1/helm/valueFiles/1
+        value: $values/clusters/environments/preprod/addons/{{.addon}}/values.yaml

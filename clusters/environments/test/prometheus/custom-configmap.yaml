@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prometheus-custom-config
-  namespace: monitoring
-data:
-  custom-parameter: "test-value-123"
-  description: "This is a custom parameter added in the test environment overlay"

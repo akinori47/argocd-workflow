@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../schemas/addon.schema.json
+addon: node-exporter
+# Enabled by default across all clusters (Opt-out pattern: no folder needed in environments/* unless overriding)
+enabled: "true"
+namespace: monitoring
+syncWave: "-1"
+chart:
+  repoURL: https://prometheus-community.github.io/helm-charts
+  name: prometheus-node-exporter
+  version: "4.44.0"

@@ -1,14 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root-bootstrap
+  name: root-control-plane
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: /bootstrap
 spec:
   project: default
   source:
     repoURL: https://github.com/akinori47/argocd-workflow.git
     targetRevision: HEAD
-    path: clusters/environments/test
+    # Change to bootstrap/environments/prod on the production cluster
+    path: bootstrap/environments/test
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -16,3 +19,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

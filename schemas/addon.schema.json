@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/akinori47/argocd-workflow/schemas/addon.schema.json",
+  "title": "Cluster Addon Descriptor (addon.yaml)",
+  "description": "Schema for base addon definitions (clusters/base/addons/*/addon.yaml) and environment overrides (clusters/environments/*/addons/*/addon.yaml) merged by Argo CD Merge Generator.",
+  "type": "object",
+  "required": ["addon"],
+  "additionalProperties": false,
+  "properties": {
+    "addon": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+      "description": "Unique identifier of the addon (merge key). Must match the directory name."
+    },
+    "enabled": {
+      "type": "string",
+      "enum": ["true", "false"],
+      "description": "String boolean ('true' or 'false') used by ApplicationSet selector to enable/disable the addon per environment."
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+      "description": "Target Kubernetes namespace for this addon."
+    },
+    "syncWave": {
+      "type": "string",
+      "pattern": "^-?[0-9]+$",
+      "description": "Argo CD sync-wave ordering."
+    },
+    "chart": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repoURL": {
+          "type": "string",
+          "description": "Helm repository URL or OCI registry URL."
+        },
+        "name": {
+          "type": "string",
+          "description": "Helm chart name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Helm chart version (can be overridden per environment to test upgrades in test/preprod before prod)."
+        }
+      }
+    }
+  }
+}

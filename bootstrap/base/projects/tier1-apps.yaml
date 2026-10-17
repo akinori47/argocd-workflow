@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tier1-apps
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  description: "Tier 1: Application Workloads (Backend, Frontend, and Internal Services)"
+  sourceRepos:
+    - "https://github.com/akinori47/argocd-workflow.git"
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "app-*"
+  # Application workloads cannot create cluster-scoped resources (CRDs, ClusterRoles, etc.)
+  clusterResourceWhitelist: []
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  orphanedResources:
+    warn: true

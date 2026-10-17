@@ -1,40 +1,60 @@
-# Helm values for ArgoCD installation
+# Helm values for Argo CD installation (2026 High-Performance & Zero-Trust Edition)
 # Chart: argo/argo-cd (https://argoproj.github.io/argo-helm)
 
 global:
-  # Enable the default admin user
-  admin.enabled: true
+  domain: argocd.local
 
 server:
-  # Disable SSL on the server container itself, making local port-forwarding and Ingress setup simpler
+  # TLS termination is handled at the Envoy Gateway (Gateway API) layer
   extraArgs:
     - --insecure
   service:
     type: ClusterIP
 
 configs:
-  # Configure general ArgoCD settings if needed
   cm:
+    # Disable static admin account once OIDC/RBAC is active (or keep secret-generated for local Kind)
     admin.enabled: "true"
-    kustomize.buildOptions: "--enable-helm --load-restrictor=LoadRestrictionsNone"
-  secret:
-    argocdServerAdminPassword: "$2a$10$r00nWI22wqfHPoYXG2oa9ezv8fY41KwVOYeV9ewXNYKDvQxi9hcFm"
+    # SECURITY & PERFORMANCE FIX:
+    # Removed `--enable-helm` (replaced by native Argo CD Multi-Source `spec.sources` with OCI/Helm caching)
+    # Removed `--load-restrictor=LoadRestrictionsNone` (eliminates path-traversal file read vulnerability)
+    kustomize.buildOptions: ""
+    # Use annotation tracking to avoid polluting Kubernetes label selectors on 3rd-party charts
+    application.resourceTrackingMethod: "annotation"
+    # Standardize reconciliation interval (rely on Git webhooks + manifest-generate-paths for instant sync)
+    timeout.reconciliation: "180s"
 
-# Resource requests/limits configured for a lightweight local Kind testing environment
+  params:
+    server.insecure: true
+    # Protect argocd-repo-server from OOM spikes during concurrent manifest generation
+    reposerver.parallelism.limit: 5
+    controller.status.processors: 20
+    controller.operation.processors: 10
+
+# Tuned for multi-tier workloads without OOMKills during CRD/Helm indexing
 controller:
   resources:
     limits:
       cpu: 1000m
-      memory: 1024Mi
+      memory: 1536Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 200m
+      memory: 512Mi
 
 repoServer:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1536Mi
+    requests:
+      cpu: 150m
+      memory: 512Mi
+
+applicationSet:
   resources:
     limits:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 50m
+      cpu: 100m
       memory: 128Mi

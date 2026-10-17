@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schemas/addon.schema.json
+addon: envoy-gateway
+enabled: "false"
+namespace: envoy-gateway-system
+syncWave: "-4"
+chart:
+  repoURL: docker.io/envoyproxy
+  name: gateway-helm
+  version: "v1.3.0"
